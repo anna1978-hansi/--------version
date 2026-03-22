@@ -1,0 +1,13 @@
+.venv/
+.env
+__pycache__/
+*.pyc
+.DS_Store
+node_modules/
+package-lock.json
+data/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+frontend/dist/
+*.tsbuildinfo

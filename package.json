@@ -1,0 +1,19 @@
+{
+  "name": "openai-relay-demo",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "demo": "node --env-file-if-exists=.env openai-demo.js",
+    "deepseek": "node --env-file-if-exists=.env deepseek-test.js",
+    "import:interview": "node --env-file-if-exists=.env scripts/import-interview.js",
+    "backend": "node --env-file-if-exists=.env backend-server.js",
+    "frontend:dev": "npm --prefix frontend run dev",
+    "frontend:build": "npm --prefix frontend run build",
+    "frontend:preview": "npm --prefix frontend run preview"
+  },
+  "dependencies": {
+    "axios": "^1.13.6",
+    "openai": "^6.7.0"
+  }
+}

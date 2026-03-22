@@ -1,0 +1,87 @@
+{
+  "id": "resp_098d0dda79fd8f400169bf760872c8819885a68ee04ccc0a2f",
+  "object": "response",
+  "created_at": 1774155272,
+  "status": "completed",
+  "background": false,
+  "completed_at": 1774155275,
+  "error": null,
+  "frequency_penalty": 0,
+  "incomplete_details": null,
+  "instructions": "You are a helpful coding assistant.",
+  "max_output_tokens": null,
+  "max_tool_calls": null,
+  "model": "gpt-5.4",
+  "output": [
+    {
+      "id": "msg_098d0dda79fd8f400169bf760903dc8198b77fab8baf707fd9",
+      "type": "message",
+      "status": "completed",
+      "content": [
+        {
+          "type": "output_text",
+          "annotations": [],
+          "logprobs": [],
+          "text": "第1轮  \n面试官：你好。  \n面试者：你好。  \n（说明：开场这个“你好”原文只出现了一次，严格来说双方都有可能说，另一句问候属于基于对话常规补全；如果你希望完全不补，可以把面试者这句标为“待确认”或删去。）\n\n第2轮  \n面试官：这边方便先做一个简单的自我介绍吧？  \n面试者：好的，我先简单介绍一下自己。"
+        }
+      ],
+      "phase": "final_answer",
+      "role": "assistant"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "presence_penalty": 0,
+  "previous_response_id": null,
+  "prompt_cache_key": "74a23b19-4e96-40ab-b8b0-6365036f6a95",
+  "prompt_cache_retention": null,
+  "reasoning": {
+    "effort": "none",
+    "summary": null
+  },
+  "safety_identifier": "user-1YDdDz815djrgt1R5AVp1pWZ",
+  "service_tier": "default",
+  "store": false,
+  "temperature": 1,
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tool_usage": {
+    "image_gen": {
+      "input_tokens": 0,
+      "input_tokens_details": {
+        "image_tokens": 0,
+        "text_tokens": 0
+      },
+      "output_tokens": 0,
+      "output_tokens_details": {
+        "image_tokens": 0,
+        "text_tokens": 0
+      },
+      "total_tokens": 0
+    },
+    "web_search": {
+      "num_requests": 0
+    }
+  },
+  "tools": [],
+  "top_logprobs": 0,
+  "top_p": 0.98,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 301,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 116,
+    "output_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "total_tokens": 417
+  },
+  "user": null,
+  "metadata": {}
+}

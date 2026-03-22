@@ -1,0 +1,87 @@
+{
+  "id": "resp_0c5bb578a94afa220169bf77641860819996b02461fcc7e819",
+  "object": "response",
+  "created_at": 1774155620,
+  "status": "completed",
+  "background": false,
+  "completed_at": 1774155634,
+  "error": null,
+  "frequency_penalty": 0,
+  "incomplete_details": null,
+  "instructions": "You are a helpful coding assistant.",
+  "max_output_tokens": null,
+  "max_tool_calls": null,
+  "model": "gpt-5.4",
+  "output": [
+    {
+      "id": "msg_0c5bb578a94afa220169bf77647714819986a44b7ee7cd4cd0",
+      "type": "message",
+      "status": "completed",
+      "content": [
+        {
+          "type": "output_text",
+          "annotations": [],
+          "logprobs": [],
+          "text": "第1轮  \n待确认：我可以做到。  \n待确认：我可以做到。  \n\n第2轮  \n面试者：我可以用它，这个就好，长这样。  \n面试官：你不说？这边有一个。  \n\n第3轮  \n面试者：好吧。  \n面试者：就简单看一下。  \n\n第4轮  \n面试者：那一个我去简单地看一下。  \n待确认：抱出来的。  \n\n第5轮  \n面试者：感觉稍微动不了。  \n面试者：看一下。  \n\n第6轮  \n待确认：开动机之后。  \n面试者：一个 key 就找到了。  \n\n第7轮  \n面试官：嗯，您好，应该写得差不多了吧？  \n面试者：嗯，差不多了，我看一下。  \n\n第8轮  \n面试官：好。  \n面试者：好的。  \n\n第9轮  \n面试官：我们再做一个题吧。  \n面试官：实现一个 Promise。  \n\n第10轮  \n面试官：实现一个 Promise。  \n面试者：哦，我觉得这个应该还比较艰难。  \n\n第11轮  \n面试官：但是再加一个限制。  \n面试官：就是加一个带并发数限制的 Promise。  \n\n第12轮  \n面试者：加个 limit，然后再想有什么名称好一点。  \n面试者：想一想，带并发数限制……我想知道这个“带并发数限制”是什么意思？  \n\n第13轮  \n面试官：就是说假设你现在有五个任务。  \n面试官：然后你 limit 是 2。  \n\n第14轮  \n面试官：然后就是说你让这五个任务，就是分别地、两个两个地。  \n面试官：就是前面执行完了之后，然后再那个……  \n\n第15轮  \n面试官：然后最后返回的结果，就是还是看这五个任务的成功动作。  \n面试者：是。  \n\n第16轮  \n面试者：我可以做到。  \n待确认：我可以把你弄到。  \n\n第17轮  \n待确认：我可以弄到。  \n待确认：你不痛苦。  \n\n第18轮  \n待确认：你不痛苦。  \n待确认：你也要吃苦。  \n\n第19轮  \n面试者：我可以做一些。  \n面试者：我可以做一些。  \n\n第20轮  \n面试者：我可以做一些，放在这里。  \n待确认：东西是……  \n\n第21轮  \n面试官：这个时候你如果把所有的任务都……  \n面试官：这个之前完了之后，再点一个 next，是吧？  \n\n第22轮  \n面试者：是吧。  \n待确认：臭味道。  \n\n第23轮  \n面试官：看我这里做的这个，怎么样实现一个并发。  \n面试官：你想一下。  \n\n第24轮  \n面试官：你这个并发，它最后返回是 returning。  \n面试者：待确认。  \n\n说明：  \n- 这一段转写噪声很重，出现大量重复的“我可以做到 / 我只是不放一层 / 我可以做一些”等内容，很多更像语音识别误转，无法可靠判断说话人，因此我尽量只在有上下文支撑的地方判断角色。  \n- “提拔”应为“题吧”，“病发”应为“并发”，“反回 / reputing”应为“返回 / returning”之类的口误或误转。"
+        }
+      ],
+      "phase": "final_answer",
+      "role": "assistant"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "presence_penalty": 0,
+  "previous_response_id": null,
+  "prompt_cache_key": "df0a8ac5-1f8a-4247-b554-bcfda7866860",
+  "prompt_cache_retention": null,
+  "reasoning": {
+    "effort": "none",
+    "summary": null
+  },
+  "safety_identifier": "user-1YDdDz815djrgt1R5AVp1pWZ",
+  "service_tier": "default",
+  "store": false,
+  "temperature": 1,
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tool_usage": {
+    "image_gen": {
+      "input_tokens": 0,
+      "input_tokens_details": {
+        "image_tokens": 0,
+        "text_tokens": 0
+      },
+      "output_tokens": 0,
+      "output_tokens_details": {
+        "image_tokens": 0,
+        "text_tokens": 0
+      },
+      "total_tokens": 0
+    },
+    "web_search": {
+      "num_requests": 0
+    }
+  },
+  "tools": [],
+  "top_logprobs": 0,
+  "top_p": 0.98,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 1610,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 791,
+    "output_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "total_tokens": 2401
+  },
+  "user": null,
+  "metadata": {}
+}

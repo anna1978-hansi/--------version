@@ -1,0 +1,111 @@
+{
+  "startedAt": "2026-03-22T07:46:37.972Z",
+  "inputFile": "标准录音 6.mp3.txt",
+  "model": "deepseek-chat",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "transcriptChars": 16104,
+  "promptChars": 16347,
+  "requestTimeoutMs": 660000,
+  "maxOutputTokens": 8000,
+  "stream": true,
+  "temperature": null,
+  "topP": null,
+  "requestBytes": 32818,
+  "phase": "response_complete",
+  "lastEventAt": "2026-03-22T07:48:44.035Z",
+  "elapsedMs": 126065,
+  "streamEventCount": 4431,
+  "streamedTextChars": 8516,
+  "timeline": [
+    {
+      "at": "2026-03-22T07:46:37.973Z",
+      "elapsedMs": 1,
+      "phase": "request_prepared"
+    },
+    {
+      "at": "2026-03-22T07:46:37.986Z",
+      "elapsedMs": 14,
+      "phase": "sending_request_body",
+      "requestBytes": 32818
+    },
+    {
+      "at": "2026-03-22T07:46:37.987Z",
+      "elapsedMs": 15,
+      "phase": "socket_assigned",
+      "reusedSocket": false
+    },
+    {
+      "at": "2026-03-22T07:46:37.988Z",
+      "elapsedMs": 16,
+      "phase": "dns_lookup",
+      "host": "api.deepseek.com",
+      "address": "28.0.0.20",
+      "family": 4,
+      "error": null
+    },
+    {
+      "at": "2026-03-22T07:46:37.989Z",
+      "elapsedMs": 17,
+      "phase": "tcp_connected"
+    },
+    {
+      "at": "2026-03-22T07:46:38.390Z",
+      "elapsedMs": 418,
+      "phase": "tls_connected"
+    },
+    {
+      "at": "2026-03-22T07:46:38.390Z",
+      "elapsedMs": 418,
+      "phase": "request_body_sent",
+      "requestBytes": 32818
+    },
+    {
+      "at": "2026-03-22T07:46:38.989Z",
+      "elapsedMs": 1017,
+      "phase": "response_headers_received",
+      "statusCode": 200,
+      "contentType": "text/event-stream; charset=utf-8"
+    },
+    {
+      "at": "2026-03-22T07:46:39.569Z",
+      "elapsedMs": 1597,
+      "phase": "first_response_chunk",
+      "chunkBytes": 592
+    },
+    {
+      "at": "2026-03-22T07:48:44.034Z",
+      "elapsedMs": 126062,
+      "phase": "stream_done_event",
+      "streamEventCount": 4431
+    },
+    {
+      "at": "2026-03-22T07:48:44.035Z",
+      "elapsedMs": 126063,
+      "phase": "response_complete",
+      "receivedBytes": 1286356
+    }
+  ],
+  "lastNetworkEvent": "response.end",
+  "socketInfo": "https://api.deepseek.com:443",
+  "httpStatus": 200,
+  "responseHeaders": {
+    "content-type": "text/event-stream; charset=utf-8",
+    "transfer-encoding": "chunked",
+    "connection": "keep-alive",
+    "date": "Sun, 22 Mar 2026 07:46:38 GMT",
+    "x-content-type-options": "nosniff",
+    "server": "elb",
+    "cache-control": "no-cache",
+    "vary": "origin, access-control-request-method, access-control-request-headers",
+    "access-control-allow-credentials": "true",
+    "x-ds-trace-id": "72fc95290ece9ab13eaa0d8a6d144264",
+    "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+    "x-cache": "Miss from cloudfront",
+    "via": "1.1 66cecad00b692b43f331fddbf5d0f1f8.cloudfront.net (CloudFront)",
+    "x-amz-cf-pop": "TPE54-P1",
+    "x-amz-cf-id": "13mwcDOJDibfg-VX7Ej2Wr2p5_bTo5jfFljrjam5kH8JGF-BWRFVHA=="
+  },
+  "firstResponseByteAt": "2026-03-22T07:46:39.569Z",
+  "responseBodyPreview": "{\"id\":\"4b9c7e8b-0e4b-46e4-b326-a4c1a2f3ba6c\",\"object\":\"chat.completion.chunk\",\"created\":1774165598,\"model\":\"deepseek-chat\",\"system_fingerprint\":\"fp_eaab8d114b_prod0820_fp8_kvcache_new_kvcache\",\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"\"},\"logprobs\":null,\"finish_reason\":null}]}",
+  "responseBytes": 1286356
+}

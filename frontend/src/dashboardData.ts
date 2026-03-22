@@ -1,140 +1,166 @@
 import { sessionSummary as mockSessionSummary } from "./mockData";
 import type { ApiSession } from "./types";
 
-export type DashboardSessionCard = {
-  sessionKey: string;
-  title: string;
-  company: string;
-  department: string;
-  roleFocus: string;
-  stageTrail: string[];
-  currentStage: number;
-  statusLabel: string;
-  statusTone: "active" | "alert" | "archived";
-  outcomeLabel: string;
-  weaknessTitle: string;
-  weaknessSummary: string;
-  improvementNote: string;
-  updatedDate: string;
-  totalRounds: number;
-  model: string;
-  isSample: boolean;
-};
+export type InterviewStatusKey =
+  | "scheduled"
+  | "active"
+  | "waiting"
+  | "passed"
+  | "rejected"
+  | "archived";
 
-export type DepartmentDigest = {
+export type InterviewStatusTone = InterviewStatusKey;
+
+export type InterviewRoundPlan = {
   name: string;
-  totalSessions: number;
-  activeSessions: number;
-  mainGap: string;
+  schedule: string;
+  outcome: string;
+  statusTone: InterviewStatusTone;
   note: string;
 };
 
-export type FailureCluster = {
-  title: string;
-  countLabel: string;
-  description: string;
-};
-
-export type DispatchMemo = {
-  label: string;
+export type InterviewTask = {
   title: string;
   description: string;
 };
 
-export type ReviewTimelineItem = {
+export type InterviewHistoryItem = {
   dateLabel: string;
   title: string;
   description: string;
 };
 
-const sessionBlueprints: DashboardSessionCard[] = [
+export type InterviewResource = {
+  label: string;
+  description: string;
+  actionLabel: string;
+  actionType: "workspace" | "note" | "result";
+};
+
+export type DashboardSessionCard = {
+  sessionKey: string;
+  title: string;
+  company: string;
+  department: string;
+  roleTitle: string;
+  roleFocus: string;
+  sourceChannel: string;
+  city: string;
+  recruiterName: string;
+  salaryRange: string;
+  stageTrail: string[];
+  currentStage: number;
+  statusKey: InterviewStatusKey;
+  statusLabel: string;
+  statusTone: InterviewStatusTone;
+  nextInterviewAt: string;
+  updatedDate: string;
+  totalRounds: number;
+  model: string;
+  isSample: boolean;
+  summary: string;
+  weaknessTitle: string;
+  weaknessSummary: string;
+  improvementNote: string;
+  nextActionLabel: string;
+  resultSummary: string;
+  decisionNote: string;
+  roundPlans: InterviewRoundPlan[];
+  tasks: InterviewTask[];
+  history: InterviewHistoryItem[];
+  resources: InterviewResource[];
+};
+
+export type PlatformDigest = {
+  name: string;
+  totalSessions: number;
+  activeSessions: number;
+  note: string;
+};
+
+export type HomeActivityItem = {
+  dateLabel: string;
+  title: string;
+  description: string;
+};
+
+export type StatusOption = {
+  key: InterviewStatusKey;
+  label: string;
+  description: string;
+};
+
+export const interviewStatusMeta: Record<
+  InterviewStatusKey,
   {
-    sessionKey: mockSessionSummary.sessionKey,
-    title: mockSessionSummary.title,
-    company: "美团",
-    department: "到店前端",
-    roleFocus: "RN 故障排查 / AI 编程",
-    stageTrail: ["一面录音", "问题整理", "二面准备"],
-    currentStage: 1,
-    statusLabel: "复盘中",
-    statusTone: "active",
-    outcomeLabel: "二面前补表达",
-    weaknessTitle: "结论后置",
-    weaknessSummary:
-      "事故排查链路是真实的，但关键根因说得太晚，面试官需要自己从长段口语里捞重点。",
-    improvementNote: "先说根因，再讲回溯路径和治理动作，整轮会更像高级工程师表达。",
-    updatedDate: mockSessionSummary.createdDate,
-    totalRounds: mockSessionSummary.totalRounds,
-    model: mockSessionSummary.model,
-    isSample: true,
+    label: string;
+    tone: InterviewStatusTone;
+  }
+> = {
+  scheduled: {
+    label: "已安排",
+    tone: "scheduled",
+  },
+  active: {
+    label: "进行中",
+    tone: "active",
+  },
+  waiting: {
+    label: "待结果",
+    tone: "waiting",
+  },
+  passed: {
+    label: "已通过",
+    tone: "passed",
+  },
+  rejected: {
+    label: "未通过",
+    tone: "rejected",
+  },
+  archived: {
+    label: "已归档",
+    tone: "archived",
+  },
+};
+
+export const statusUpdateOptions: StatusOption[] = [
+  {
+    key: "scheduled",
+    label: "标记为已安排",
+    description: "适合刚拿到面试时间、还没进入正式轮次的状态。",
   },
   {
-    sessionKey: "sample-bilibili-growth",
-    title: "商业增长前端一面",
-    company: "哔哩哔哩",
-    department: "商业增长前端",
-    roleFocus: "埋点治理 / 投放链路",
-    stageTrail: ["一面结束", "二面待排", "主管面待定"],
-    currentStage: 0,
-    statusLabel: "待复盘",
-    statusTone: "active",
-    outcomeLabel: "需补问题拆解",
-    weaknessTitle: "承接追问不稳",
-    weaknessSummary:
-      "能回答主问题，但一到追问就容易回到泛泛描述，缺少拆解顺序和判断依据。",
-    improvementNote: "先练“现象、判断、验证、结论”四步，再进入二面准备会更稳。",
-    updatedDate: "2026-03-21",
-    totalRounds: 18,
-    model: "deepseek-chat",
-    isSample: true,
+    key: "active",
+    label: "标记为进行中",
+    description: "适合已经开始面试流程，当前还在继续推进的档案。",
   },
   {
-    sessionKey: "sample-ai-platform",
-    title: "AI 工程效率二面",
-    company: "某 AI 应用团队",
-    department: "AI 工程效率",
-    roleFocus: "规则治理 / 任务拆分",
-    stageTrail: ["一面通过", "二面挂点", "归因整理"],
-    currentStage: 2,
-    statusLabel: "需归因",
-    statusTone: "alert",
-    outcomeLabel: "治理方案偏虚",
-    weaknessTitle: "闭环不足",
-    weaknessSummary:
-      "知道方向，但没有落到 lint、脚手架、review checklist 这类团队动作，面试官很难继续追问。",
-    improvementNote: "所有治理题都补一条制度化动作和一条工具化动作，答案会更扎实。",
-    updatedDate: "2026-03-20",
-    totalRounds: 22,
-    model: "deepseek-chat",
-    isSample: true,
+    key: "waiting",
+    label: "标记为待结果",
+    description: "适合本轮已面完，正在等反馈或等下一步安排。",
   },
   {
-    sessionKey: "sample-xiaohongshu-content",
-    title: "内容体验前端复盘档案",
-    company: "小红书",
-    department: "内容体验前端",
-    roleFocus: "交互表达 / 项目复盘",
-    stageTrail: ["一面结束", "复盘完成", "表达归档"],
-    currentStage: 2,
-    statusLabel: "已归档",
-    statusTone: "archived",
-    outcomeLabel: "表达节奏稳定",
-    weaknessTitle: "案例辨识度可再提炼",
-    weaknessSummary:
-      "整体答题平稳，但几个项目亮点还可以再压缩成更容易被记住的表达钩子。",
-    improvementNote: "为每个项目准备一句高识别度开场，能让下一轮更快进入深挖。",
-    updatedDate: "2026-03-18",
-    totalRounds: 16,
-    model: "deepseek-chat",
-    isSample: true,
+    key: "passed",
+    label: "标记为已通过",
+    description: "适合某一轮明确通过，准备进入下一轮或进入 offer 流程。",
+  },
+  {
+    key: "rejected",
+    label: "标记为未通过",
+    description: "适合已经明确挂掉，准备做归因和复盘归档。",
+  },
+  {
+    key: "archived",
+    label: "标记为已归档",
+    description: "适合这条线已经整理完，不再作为当前重点推进。",
   },
 ];
 
-const departmentNotes: Record<string, string> = {
-  到店前端: "更适合重点看真实事故和治理表达，避免答成碎片化排查流水账。",
-  商业增长前端: "这类岗位更吃问题拆解、指标意识和实验判断，建议每轮都补充权衡过程。",
-  "AI 工程效率": "要把“会用 AI”升级成“怎么建立规则、拆任务、做验证”的方法论表达。",
-  内容体验前端: "表达节奏通常不是短板，重点是案例辨识度和用户体验判断是否足够鲜明。",
+const sourceChannelNotes: Record<string, string> = {
+  内推: "内推来的线通常反馈更快，适合优先维护状态变更和下一轮准备。",
+  "Boss 直聘": "Boss 直聘的机会量大，首页更适合先看时间和状态，不要让档案散掉。",
+  猎聘: "猎聘更适合沉淀结果记录和薪资区间，方便后续横向比较。",
+  官网投递: "官网投递节奏会慢一些，适合在平台里长期跟踪进度，不用频繁打断复盘。 ",
 };
 
 function formatIsoDate(isoText: string) {
@@ -146,6 +172,495 @@ function formatIsoDate(isoText: string) {
 
   return date.toISOString().slice(0, 10);
 }
+
+export function applyInterviewStatus(
+  card: DashboardSessionCard,
+  statusKey: InterviewStatusKey
+): DashboardSessionCard {
+  const statusMeta = interviewStatusMeta[statusKey];
+
+  return {
+    ...card,
+    statusKey,
+    statusLabel: statusMeta.label,
+    statusTone: statusMeta.tone,
+  };
+}
+
+const sessionBlueprints: DashboardSessionCard[] = [
+  applyInterviewStatus(
+    {
+      sessionKey: mockSessionSummary.sessionKey,
+      title: mockSessionSummary.title,
+      company: "美团",
+      department: "到店前端",
+      roleTitle: "前端开发工程师",
+      roleFocus: "RN 故障排查 / AI 编程",
+      sourceChannel: "内推",
+      city: "上海",
+      recruiterName: "业务 HR",
+      salaryRange: "25k - 35k x 16",
+      stageTrail: ["已投递", "一面通过", "二面待面", "主管面"],
+      currentStage: 2,
+      statusKey: "active",
+      statusLabel: "",
+      statusTone: "active",
+      nextInterviewAt: "03/25 周三 19:30 · 技术二面",
+      updatedDate: mockSessionSummary.createdDate,
+      totalRounds: mockSessionSummary.totalRounds,
+      model: mockSessionSummary.model,
+      isSample: true,
+      summary:
+        "这是目前最值得投入的一条线。真实事故和 AI 编程经验都能打，但二面前需要把结论前置和治理闭环补齐。",
+      weaknessTitle: "结论后置",
+      weaknessSummary:
+        "事故排查链路是真实的，但关键根因说得太晚，面试官需要自己从长段口语里捞重点。",
+      improvementNote: "二面前重点把“根因、回溯、治理”压成一套更利落的表达。",
+      nextActionLabel: "今晚先补一版 90 秒事故排查答案",
+      resultSummary: "一面反馈偏正面，问题主要集中在表达收束和治理动作不够具体。",
+      decisionNote:
+        "如果二面能把治理方案说实，这条线很有机会继续推进到主管面。当前不需要换案例，只需要把表达打磨得更工程化。",
+      roundPlans: [
+        {
+          name: "HR 沟通",
+          schedule: "03/18 周三 14:00",
+          outcome: "已完成",
+          statusTone: "passed",
+          note: "确认岗位方向和项目经历，整体匹配度较高。",
+        },
+        {
+          name: "技术一面",
+          schedule: "03/21 周六 20:00",
+          outcome: "已通过",
+          statusTone: "passed",
+          note: "事故排查案例真实，但治理闭环被继续追问。",
+        },
+        {
+          name: "技术二面",
+          schedule: "03/25 周三 19:30",
+          outcome: "待准备",
+          statusTone: "scheduled",
+          note: "重点准备治理措施、追问承接和表达压缩。",
+        },
+        {
+          name: "主管面",
+          schedule: "待排期",
+          outcome: "未开始",
+          statusTone: "archived",
+          note: "先把二面打稳，再决定是否继续补项目治理案例。",
+        },
+      ],
+      tasks: [
+        {
+          title: "压缩 RN 故障排查表达",
+          description: "把根因前置，减少口语连接词，控制在 90 秒左右。",
+        },
+        {
+          title: "补一条团队治理动作",
+          description: "统一 alias、lint 规则和 review checklist，形成真实工程闭环。",
+        },
+        {
+          title: "准备 AI 编程追问",
+          description: "把规则配置、任务拆分和验证方式整理成三步法。",
+        },
+      ],
+      history: [
+        {
+          dateLabel: "03 / 22",
+          title: "确认二面时间",
+          description: "时间已经落到 03/25 周三晚上，优先级升到本周第一位。",
+        },
+        {
+          dateLabel: "03 / 21",
+          title: "一面结束并进入复盘",
+          description: "技术一面整体通过，但“治理”相关追问还不够扎实。",
+        },
+        {
+          dateLabel: "03 / 18",
+          title: "内推线建立",
+          description: "HR 已确认团队方向偏 RN 和工程效率，案例匹配度不错。",
+        },
+      ],
+      resources: [
+        {
+          label: "录音复盘工作台",
+          description: "继续整理轮次、改写答案、保留面试原声片段。",
+          actionLabel: "进入工作台",
+          actionType: "workspace",
+        },
+        {
+          label: "结果记录草稿",
+          description: "后面接数据库时，这里会接状态变化、反馈原文和时间戳。",
+          actionLabel: "查看结果位",
+          actionType: "result",
+        },
+        {
+          label: "表达改写笔记",
+          description: "沉淀每轮最适合记忆的版本，避免下次又从零组织。",
+          actionLabel: "打开笔记位",
+          actionType: "note",
+        },
+      ],
+    },
+    "active"
+  ),
+  applyInterviewStatus(
+    {
+      sessionKey: "sample-bilibili-growth",
+      title: "商业增长前端一面",
+      company: "哔哩哔哩",
+      department: "商业增长前端",
+      roleTitle: "前端开发工程师",
+      roleFocus: "埋点治理 / 投放链路",
+      sourceChannel: "Boss 直聘",
+      city: "上海",
+      recruiterName: "招聘 HR",
+      salaryRange: "24k - 32k x 15",
+      stageTrail: ["约面完成", "技术一面", "二面待定", "结果确认"],
+      currentStage: 1,
+      statusKey: "scheduled",
+      statusLabel: "",
+      statusTone: "scheduled",
+      nextInterviewAt: "03/24 周二 18:30 · 技术一面",
+      updatedDate: "2026-03-21",
+      totalRounds: 18,
+      model: "deepseek-chat",
+      isSample: true,
+      summary:
+        "这条线还没进入深度复盘，更像一个即将发生的档案。首页里应该先看时间和准备动作，而不是看长内容。",
+      weaknessTitle: "追问承接偏弱",
+      weaknessSummary:
+        "主问题能答，但容易在追问阶段回到泛泛描述，缺少实验判断和指标权衡。",
+      improvementNote: "一面前把“现象、判断、验证、结论”练顺，不然第一轮就会暴露。",
+      nextActionLabel: "把投放链路案例拆成一版 3 分钟答案",
+      resultSummary: "还没正式开始面试，当前最重要的是准备第一轮的结构和例子顺序。",
+      decisionNote:
+        "这条线的关键不是先做大复盘，而是把案例表达准备好，避免面试后再回头修补基础结构。",
+      roundPlans: [
+        {
+          name: "简历筛选",
+          schedule: "03/20 周五",
+          outcome: "已通过",
+          statusTone: "passed",
+          note: "HR 已确认约面，岗位偏增长与数据联动。",
+        },
+        {
+          name: "技术一面",
+          schedule: "03/24 周二 18:30",
+          outcome: "待进行",
+          statusTone: "scheduled",
+          note: "重点准备埋点治理、实验判断和跨团队协作案例。",
+        },
+        {
+          name: "技术二面",
+          schedule: "待安排",
+          outcome: "未开始",
+          statusTone: "archived",
+          note: "先看一面反馈，再决定是否补更多增长策略表达。",
+        },
+      ],
+      tasks: [
+        {
+          title: "准备增长案例主线",
+          description: "从目标、指标、方案选择、结果复盘四段切开，避免答得散。",
+        },
+        {
+          title: "补一条实验权衡",
+          description: "要能说明为什么选这个方案，而不是只说最后做了什么。",
+        },
+      ],
+      history: [
+        {
+          dateLabel: "03 / 21",
+          title: "收到约面时间",
+          description: "已经锁定周二晚上的技术一面，优先级次于美团二面。",
+        },
+        {
+          dateLabel: "03 / 20",
+          title: "Boss 直聘沟通建立",
+          description: "JD 更看重增长实验和业务配合，不是纯组件开发方向。",
+        },
+      ],
+      resources: [
+        {
+          label: "面经整理位",
+          description: "后面可以放和商业增长相关的高频追问。",
+          actionLabel: "查看占位",
+          actionType: "note",
+        },
+        {
+          label: "结果记录草稿",
+          description: "一面结束后可以直接在档案页补状态和反馈。",
+          actionLabel: "查看结果位",
+          actionType: "result",
+        },
+      ],
+    },
+    "scheduled"
+  ),
+  applyInterviewStatus(
+    {
+      sessionKey: "sample-ai-platform",
+      title: "AI 工程效率二面",
+      company: "某 AI 应用团队",
+      department: "AI 工程效率",
+      roleTitle: "前端 / AI 工程效率",
+      roleFocus: "规则治理 / 任务拆分",
+      sourceChannel: "猎聘",
+      city: "杭州",
+      recruiterName: "技术招聘",
+      salaryRange: "30k - 40k x 16",
+      stageTrail: ["一面通过", "二面结束", "结果待回", "结论归档"],
+      currentStage: 2,
+      statusKey: "waiting",
+      statusLabel: "",
+      statusTone: "waiting",
+      nextInterviewAt: "等待结果反馈",
+      updatedDate: "2026-03-20",
+      totalRounds: 22,
+      model: "deepseek-chat",
+      isSample: true,
+      summary:
+        "这条线已经面到比较深的轮次了，重点不是排时间，而是把结果、挂点和后续是否继续投入整理清楚。",
+      weaknessTitle: "治理闭环不足",
+      weaknessSummary:
+        "知道 AI 编程和规则治理的方向，但没有落到工具、流程与团队机制，所以回答仍然偏虚。",
+      improvementNote: "如果拿到拒绝反馈，优先把挂点归到治理动作不落地这类问题里。",
+      nextActionLabel: "等反馈时先整理一版“AI 规则治理”标准答案",
+      resultSummary: "二面已经结束，目前在等团队反馈。无论结果如何，这条线都值得沉淀成方法论。",
+      decisionNote:
+        "这一条线的价值很高，因为它暴露的是方法论表达问题，不是具体项目经历不足。后续很适合作为模板档案保留。",
+      roundPlans: [
+        {
+          name: "技术一面",
+          schedule: "03/15 周日",
+          outcome: "已通过",
+          statusTone: "passed",
+          note: "AI 编程经验有辨识度，整体印象较好。",
+        },
+        {
+          name: "技术二面",
+          schedule: "03/20 周五 19:00",
+          outcome: "已完成",
+          statusTone: "waiting",
+          note: "治理型问题被追问得更深，缺的是落地动作和团队机制。",
+        },
+        {
+          name: "最终结果",
+          schedule: "待回信",
+          outcome: "等待中",
+          statusTone: "waiting",
+          note: "无论是否通过，都要把挂点整理进复盘模板里。",
+        },
+      ],
+      tasks: [
+        {
+          title: "补齐工具链表达",
+          description: "把 lint、脚手架、模板和 review 机制都补到答案里。",
+        },
+        {
+          title: "整理拒绝原因模板",
+          description: "后面接数据库时，这条档案可以直接写入被挂原因分类。",
+        },
+      ],
+      history: [
+        {
+          dateLabel: "03 / 20",
+          title: "二面完成",
+          description: "回答里方法论方向对，但团队治理动作还不够具体。",
+        },
+        {
+          dateLabel: "03 / 16",
+          title: "进入二面准备",
+          description: "把 Cursor rules、跨仓库协作和验证闭环作为主要亮点。",
+        },
+      ],
+      resources: [
+        {
+          label: "治理问题模板",
+          description: "适合沉淀一版后续多个岗位都能复用的答案骨架。",
+          actionLabel: "打开模板位",
+          actionType: "note",
+        },
+        {
+          label: "结果记录草稿",
+          description: "反馈一到，就可以直接把是否通过和挂点补进这里。",
+          actionLabel: "查看结果位",
+          actionType: "result",
+        },
+      ],
+    },
+    "waiting"
+  ),
+  applyInterviewStatus(
+    {
+      sessionKey: "sample-xiaohongshu-content",
+      title: "内容体验前端复盘档案",
+      company: "小红书",
+      department: "内容体验前端",
+      roleTitle: "前端开发工程师",
+      roleFocus: "交互表达 / 项目复盘",
+      sourceChannel: "官网投递",
+      city: "上海",
+      recruiterName: "招聘同学",
+      salaryRange: "26k - 34k x 15",
+      stageTrail: ["一面结束", "二面结束", "结果已回", "归档整理"],
+      currentStage: 3,
+      statusKey: "rejected",
+      statusLabel: "",
+      statusTone: "rejected",
+      nextInterviewAt: "本轮已结束",
+      updatedDate: "2026-03-18",
+      totalRounds: 16,
+      model: "deepseek-chat",
+      isSample: true,
+      summary:
+        "这是一条已经结束的档案，更适合记录被挂原因、提炼经验，而不是继续堆新的待办。",
+      weaknessTitle: "案例辨识度不足",
+      weaknessSummary:
+        "整体表达平稳，但几个项目亮点没有形成让人记得住的钩子，导致面试结束后记忆点偏弱。",
+      improvementNote: "适合沉淀成“高识别度开场句”模板，供其他岗位复用。",
+      nextActionLabel: "把挂点归到“亮点不够鲜明”这一类模板里",
+      resultSummary: "团队已明确结束当前流程，这条档案的重点转为归因和经验回收。",
+      decisionNote:
+        "不建议继续追加准备动作，更适合把表达节奏与项目亮点问题归档，作为后续所有内容体验类岗位的参考。",
+      roundPlans: [
+        {
+          name: "技术一面",
+          schedule: "03/10 周二",
+          outcome: "已完成",
+          statusTone: "passed",
+          note: "整体表达平稳，没有明显失误。",
+        },
+        {
+          name: "技术二面",
+          schedule: "03/17 周二",
+          outcome: "已结束",
+          statusTone: "rejected",
+          note: "案例亮点不够聚焦，缺少能被面试官快速记住的表达钩子。",
+        },
+        {
+          name: "结果归档",
+          schedule: "03/18 周三",
+          outcome: "已记录",
+          statusTone: "archived",
+          note: "后续只保留经验摘要，不继续投入面试准备时间。",
+        },
+      ],
+      tasks: [
+        {
+          title: "提炼项目开场句",
+          description: "为每个项目写一句更能被记住的开场表达，用于下一次类似岗位。",
+        },
+      ],
+      history: [
+        {
+          dateLabel: "03 / 18",
+          title: "收到未通过反馈",
+          description: "问题不在基础能力，而在案例辨识度和记忆点不足。",
+        },
+        {
+          dateLabel: "03 / 17",
+          title: "二面结束",
+          description: "整体交流顺畅，但没有形成足够鲜明的项目印象。",
+        },
+      ],
+      resources: [
+        {
+          label: "挂点归档位",
+          description: "后面接库后，这里可以关联统一的失败原因分类。",
+          actionLabel: "查看归档位",
+          actionType: "result",
+        },
+      ],
+    },
+    "rejected"
+  ),
+  applyInterviewStatus(
+    {
+      sessionKey: "sample-dewu-commerce",
+      title: "电商前端主管面准备",
+      company: "得物",
+      department: "电商交易前端",
+      roleTitle: "高级前端工程师",
+      roleFocus: "性能治理 / 业务稳定性",
+      sourceChannel: "Boss 直聘",
+      city: "上海",
+      recruiterName: "HRBP",
+      salaryRange: "32k - 42k x 16",
+      stageTrail: ["一面通过", "二面通过", "主管面待排", "结果确认"],
+      currentStage: 2,
+      statusKey: "passed",
+      statusLabel: "",
+      statusTone: "passed",
+      nextInterviewAt: "等待主管面排期",
+      updatedDate: "2026-03-19",
+      totalRounds: 20,
+      model: "deepseek-chat",
+      isSample: true,
+      summary:
+        "这条线目前推进最顺，说明工程稳定性和性能治理方向是有竞争力的。平台首页里适合把它放在“已推进”区域。",
+      weaknessTitle: "业务故事还可以再压缩",
+      weaknessSummary:
+        "回答已经够稳，但如果想在主管面更有说服力，还需要把业务影响和团队协同讲得更简洁。",
+      improvementNote: "主管面前不用大改技术内容，更重要的是强化业务价值和协作判断。",
+      nextActionLabel: "补一版“性能治理带来什么业务收益”的开场句",
+      resultSummary: "前两轮反馈不错，目前只是等待主管面时间，不需要再做重型复盘。",
+      decisionNote:
+        "这条线更像稳定推进型机会，建议保持节奏，不用额外投入太多修补时间，重点是别临场失去简洁度。",
+      roundPlans: [
+        {
+          name: "技术一面",
+          schedule: "03/11 周三",
+          outcome: "已通过",
+          statusTone: "passed",
+          note: "性能治理和问题排查得到较多正向反馈。",
+        },
+        {
+          name: "技术二面",
+          schedule: "03/18 周三",
+          outcome: "已通过",
+          statusTone: "passed",
+          note: "整体稳定，后续会进入主管面。",
+        },
+        {
+          name: "主管面",
+          schedule: "待排期",
+          outcome: "待安排",
+          statusTone: "passed",
+          note: "重点讲业务收益、跨团队推动和取舍判断。",
+        },
+      ],
+      tasks: [
+        {
+          title: "压缩业务价值表达",
+          description: "把性能治理的收益说成 2 到 3 个清晰结论，不要展开过长。",
+        },
+      ],
+      history: [
+        {
+          dateLabel: "03 / 19",
+          title: "二面后反馈正向",
+          description: "团队方向和经历匹配度不错，目前只缺最后一轮的综合沟通。",
+        },
+        {
+          dateLabel: "03 / 18",
+          title: "进入主管面准备",
+          description: "后续不需要大改技术内容，更关注表达气质和业务判断。",
+        },
+      ],
+      resources: [
+        {
+          label: "主管面准备笔记",
+          description: "可放业务价值、协同案例和判断题答案。",
+          actionLabel: "打开笔记位",
+          actionType: "note",
+        },
+      ],
+    },
+    "passed"
+  ),
+];
 
 export function buildDashboardSessions(sessions: ApiSession[]) {
   const realCards = sessions.map((session, index) => {
@@ -174,76 +689,44 @@ export function buildDashboardSessions(sessions: ApiSession[]) {
   return realCards.length ? [...realCards, ...fallbackCards] : sessionBlueprints;
 }
 
-export function buildDepartmentDigests(cards: DashboardSessionCard[]): DepartmentDigest[] {
+export function buildPlatformDigests(cards: DashboardSessionCard[]): PlatformDigest[] {
   const grouped = new Map<string, DashboardSessionCard[]>();
 
   cards.forEach((card) => {
-    const items = grouped.get(card.department) || [];
+    const items = grouped.get(card.sourceChannel) || [];
     items.push(card);
-    grouped.set(card.department, items);
+    grouped.set(card.sourceChannel, items);
   });
 
-  return Array.from(grouped.entries())
-    .slice(0, 3)
-    .map(([name, items]) => ({
-      name,
-      totalSessions: items.length,
-      activeSessions: items.filter((item) => item.statusTone !== "archived").length,
-      mainGap: items[0]?.weaknessTitle || "待补充",
-      note: departmentNotes[name] || "这一组更适合把每轮挂点整理成统一模板，避免复盘信息散落。",
-    }));
+  return Array.from(grouped.entries()).map(([name, items]) => ({
+    name,
+    totalSessions: items.length,
+    activeSessions: items.filter((item) =>
+      ["scheduled", "active", "waiting", "passed"].includes(item.statusKey)
+    ).length,
+    note: sourceChannelNotes[name] || "这组来源适合继续补充状态变化和结果记录。",
+  }));
 }
 
-export const failureClusters: FailureCluster[] = [
-  {
-    title: "结论后置",
-    countLabel: "重复出现 3 次",
-    description: "故事是真实的，但核心判断说得太慢，导致亮点埋在口语细节里。",
-  },
-  {
-    title: "治理闭环不足",
-    countLabel: "集中在 2 份档案",
-    description: "知道方向却没有落到工具、流程和团队约束，容易被判断为“只有概念”。",
-  },
-  {
-    title: "追问承接偏弱",
-    countLabel: "4 轮明显暴露",
-    description: "主问题答得过去，但一到继续深挖就容易失去结构，缺少拆解顺序。",
-  },
-];
-
-export const dispatchMemos: DispatchMemo[] = [
-  {
-    label: "本周优先",
-    title: "先补治理型答案，再做表达压缩",
-    description: "最近被追问最多的是“如何防止再次发生”，这块一旦补强，多个部门都能复用。",
-  },
-  {
-    label: "共用模板",
-    title: "为每个部门沉淀一份标准追问框架",
-    description: "建议统一成“问题现象、判断路径、最终根因、治理动作、复盘反思”五段式。",
-  },
-  {
-    label: "调度提醒",
-    title: "把挂点归因为少数几类，减少散点修补",
-    description: "先归到表达、治理、拆解三大类，再决定是改案例还是改回答方式。",
-  },
-];
-
-export const reviewTimeline: ReviewTimelineItem[] = [
+export const homeActivityFeed: HomeActivityItem[] = [
   {
     dateLabel: "03 / 22",
-    title: "补齐美团录音的二面表达稿",
-    description: "重点压缩 RN 故障排查这一轮，把根因和治理动作提前。",
+    title: "美团二面已锁定时间",
+    description: "优先级升到本周第一位，平台首页要先承接时间和准备动作。",
   },
   {
     dateLabel: "03 / 21",
-    title: "商业增长一面的追问节奏偏弱",
-    description: "需要把实验判断和指标权衡补成完整话术，不然二面容易继续失速。",
+    title: "哔哩哔哩一面刚排上",
+    description: "还不需要进入深度复盘，先把案例结构打磨清楚。",
   },
   {
     dateLabel: "03 / 20",
-    title: "AI 工程效率二面已整理出挂点",
-    description: "核心问题不是不会做，而是治理答案没落到团队机制，已经进入归因阶段。",
+    title: "AI 工程效率二面结束待反馈",
+    description: "结果一回来，就可以直接在档案页更新状态和挂点。",
+  },
+  {
+    dateLabel: "03 / 18",
+    title: "小红书档案已进入归档",
+    description: "这条线后续主要负责沉淀失败原因，不再继续投入大量准备时间。",
   },
 ];

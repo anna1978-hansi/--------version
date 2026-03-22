@@ -90,6 +90,28 @@ export type StatusOption = {
   description: string;
 };
 
+export type MemoTaskItem = {
+  id: string;
+  title: string;
+  detail: string;
+  dueLabel: string;
+  completed: boolean;
+  tone: "critical" | "focus" | "steady";
+};
+
+export type MemoTaskGroup = {
+  id: string;
+  title: string;
+  description: string;
+  items: MemoTaskItem[];
+};
+
+export type MemoSidebarItem = {
+  label: string;
+  value: string;
+  note: string;
+};
+
 export const interviewStatusMeta: Record<
   InterviewStatusKey,
   {
@@ -728,5 +750,119 @@ export const homeActivityFeed: HomeActivityItem[] = [
     dateLabel: "03 / 18",
     title: "小红书档案已进入归档",
     description: "这条线后续主要负责沉淀失败原因，不再继续投入大量准备时间。",
+  },
+];
+
+export const memoSidebarItems: MemoSidebarItem[] = [
+  {
+    label: "今日重点",
+    value: "3 项",
+    note: "优先处理有明确时间点的准备动作，不要让临近面试的任务继续漂着。",
+  },
+  {
+    label: "待回结果",
+    value: "2 条",
+    note: "本周最适合补齐状态变化和结果归档，避免档案页和真实进度脱节。",
+  },
+  {
+    label: "已完成",
+    value: "6 项",
+    note: "做完的动作要保留，这样后面接数据库时更容易映射成操作历史。",
+  },
+];
+
+export const memoTaskGroups: MemoTaskGroup[] = [
+  {
+    id: "today-focus",
+    title: "今日面试待办",
+    description: "这些是今天最值得优先处理的动作，先保证时间敏感任务不掉线。",
+    items: [
+      {
+        id: "memo-mt-second-round",
+        title: "把美团二面的事故排查答案压缩成 90 秒版",
+        detail: "先说根因，再讲回溯与治理，避免继续用长口语拖慢判断。",
+        dueLabel: "今天 19:00 前",
+        completed: false,
+        tone: "critical",
+      },
+      {
+        id: "memo-bili-growth-case",
+        title: "整理商业增长一面的投放链路案例",
+        detail: "补齐实验判断、指标权衡和最后结果，不要只停留在执行过程。",
+        dueLabel: "今天晚些时候",
+        completed: false,
+        tone: "focus",
+      },
+      {
+        id: "memo-interview-calendar",
+        title: "确认本周所有面试时间是否已同步到平台首页",
+        detail: "静态页阶段先做展示一致性检查，后面接数据库时再映射到真实日历。",
+        dueLabel: "今晚收尾",
+        completed: true,
+        tone: "steady",
+      },
+    ],
+  },
+  {
+    id: "result-followup",
+    title: "结果与状态跟进",
+    description: "更像运营动作，重点是及时更新状态和记录反馈，而不是继续堆内容。",
+    items: [
+      {
+        id: "memo-ai-followup",
+        title: "给 AI 工程效率二面补一条待结果提醒",
+        detail: "等反馈回来后，直接在档案页标记通过或未通过，并补一条结果说明。",
+        dueLabel: "明天上午",
+        completed: false,
+        tone: "focus",
+      },
+      {
+        id: "memo-xhs-archive",
+        title: "把小红书这条线转入归档模板",
+        detail: "重点保留被挂原因、可复用表达和后续不再继续投入的判断。",
+        dueLabel: "本周内",
+        completed: true,
+        tone: "steady",
+      },
+      {
+        id: "memo-dewu-manager",
+        title: "等待得物主管面排期并预留准备窗口",
+        detail: "不需要大改技术内容，但要保留一段业务价值和协同判断的简洁表达。",
+        dueLabel: "排期未定",
+        completed: false,
+        tone: "focus",
+      },
+    ],
+  },
+  {
+    id: "weekly-notes",
+    title: "本周整理备忘",
+    description: "这组更像苹果备忘录里的长期清单，适合放平台级别的小动作。",
+    items: [
+      {
+        id: "memo-db-fields",
+        title: "确认后面接库要落哪些字段",
+        detail: "至少需要公司、部门、岗位、轮次、时间、状态、结果说明、复盘入口。",
+        dueLabel: "静态页确认后",
+        completed: false,
+        tone: "steady",
+      },
+      {
+        id: "memo-platform-copy",
+        title: "统一首页与档案页的文案气质",
+        detail: "平台页偏调度，档案页偏处理，复盘页偏内容深挖，语气要各自明确。",
+        dueLabel: "本周内",
+        completed: true,
+        tone: "steady",
+      },
+      {
+        id: "memo-shortcuts",
+        title: "想一下是否需要做快捷入口",
+        detail: "比如“进入档案页”“进入复盘页”“更新状态”三种高频动作是否要固定在页面顶部。",
+        dueLabel: "后续迭代",
+        completed: false,
+        tone: "focus",
+      },
+    ],
   },
 ];

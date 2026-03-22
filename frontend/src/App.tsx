@@ -12,6 +12,8 @@ import {
   buildDashboardSessions,
   buildPlatformDigests,
   homeActivityFeed,
+  memoSidebarItems,
+  memoTaskGroups,
   statusUpdateOptions,
 } from "./dashboardData";
 import { rounds as mockRounds, sessionSummary as mockSessionSummary } from "./mockData";
@@ -38,6 +40,9 @@ type PageState =
   | {
       mode: "workspace";
       sessionKey?: string;
+    }
+  | {
+      mode: "memo";
     };
 
 const defaultSessionSummary: SessionSummary = {
@@ -98,6 +103,10 @@ function parseHash(): PageState {
     };
   }
 
+  if (hash === "memo") {
+    return { mode: "memo" };
+  }
+
   return { mode: "home" };
 }
 
@@ -116,6 +125,12 @@ function openDetail(sessionKey: string) {
 function openWorkspace(sessionKey: string) {
   if (typeof window !== "undefined") {
     window.location.hash = `workspace/${encodeURIComponent(sessionKey)}`;
+  }
+}
+
+function openMemo() {
+  if (typeof window !== "undefined") {
+    window.location.hash = "memo";
   }
 }
 
@@ -148,6 +163,11 @@ export default function App() {
   const [statusOverrides, setStatusOverrides] = useState<
     Partial<Record<string, InterviewStatusKey>>
   >({});
+  const [memoTaskState, setMemoTaskState] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(
+      memoTaskGroups.flatMap((group) => group.items.map((item) => [item.id, item.completed]))
+    )
+  );
   const [sessionSummary, setSessionSummary] = useState<SessionSummary>(defaultSessionSummary);
   const [rounds, setRounds] = useState<RoundItem[]>([]);
   const [activeRoundNumber, setActiveRoundNumber] = useState<number | null>(null);
@@ -202,6 +222,24 @@ export default function App() {
   const needsUpdateSessions = dashboardSessions
     .filter((item) => ["waiting", "passed", "rejected"].includes(item.statusKey))
     .slice(0, 3);
+  const memoGroups = memoTaskGroups.map((group) => ({
+    ...group,
+    items: group.items.map((item) => ({
+      ...item,
+      completed: memoTaskState[item.id] ?? item.completed,
+    })),
+  }));
+  const totalMemoTaskCount = memoGroups.reduce((sum, group) => sum + group.items.length, 0);
+  const completedMemoTaskCount = memoGroups.reduce(
+    (sum, group) => sum + group.items.filter((item) => item.completed).length,
+    0
+  );
+  const pendingMemoTaskCount = totalMemoTaskCount - completedMemoTaskCount;
+  const criticalMemoTaskCount = memoGroups.reduce(
+    (sum, group) =>
+      sum + group.items.filter((item) => item.tone === "critical" && !item.completed).length,
+    0
+  );
 
   function applyTurnsResponse(turnsResponse: TurnsResponse, preferredRoundNumber?: number | null) {
     const nextRounds = turnsResponse.items.map(buildRoundItem);
@@ -335,6 +373,18 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    if (typeof document === "undefined") {
+      return;
+    }
+
+    document.body.classList.toggle("memo-theme", pageState.mode === "memo");
+
+    return () => {
+      document.body.classList.remove("memo-theme");
+    };
+  }, [pageState.mode]);
+
+  useEffect(() => {
     void loadSessionCatalog();
   }, []);
 
@@ -356,6 +406,13 @@ export default function App() {
     setStatusOverrides((current) => ({
       ...current,
       [sessionKey]: statusKey,
+    }));
+  }
+
+  function toggleMemoTask(taskId: string) {
+    setMemoTaskState((current) => ({
+      ...current,
+      [taskId]: !current[taskId],
     }));
   }
 
@@ -521,6 +578,9 @@ export default function App() {
                 onClick={() => openWorkspace(homeLeadSession.sessionKey)}
               >
                 直接进入复盘工作台
+              </button>
+              <button className="btn btn-secondary" type="button" onClick={openMemo}>
+                打开备忘录
               </button>
             </div>
 
@@ -786,6 +846,9 @@ export default function App() {
               <button className="btn btn-secondary" type="button" onClick={openHome}>
                 回到平台首页
               </button>
+              <button className="btn btn-secondary" type="button" onClick={openMemo}>
+                打开备忘录
+              </button>
             </div>
           </div>
         </header>
@@ -997,6 +1060,150 @@ export default function App() {
     );
   }
 
+  function renderMemoPage() {
+    return (
+      <div className="memo-flow">
+        <header className="memo-hero">
+          <div className="memo-hero__copy">
+            <div className="memo-kicker">Memo Desk</div>
+            <h1 className="serif-title">任务备忘录</h1>
+            <p>
+              这一页更偏日常处理和运营感。先记录要做什么、什么时候做、是否已经完成，再决定要不要跳回档案页或复盘页。
+            </p>
+
+            <div className="memo-hero__actions">
+              <button className="btn btn-primary memo-btn-primary" type="button" onClick={openHome}>
+                返回平台首页
+              </button>
+              <button
+                className="btn btn-secondary memo-btn-secondary"
+                type="button"
+                onClick={() => (homeLeadSession ? openDetail(homeLeadSession.sessionKey) : openHome())}
+              >
+                打开当前重点档案
+              </button>
+            </div>
+          </div>
+
+          <div className="memo-hero__stats">
+            <article className="memo-stat-card">
+              <span className="memo-stat-card__label">待完成</span>
+              <strong>{pendingMemoTaskCount}</strong>
+            </article>
+            <article className="memo-stat-card">
+              <span className="memo-stat-card__label">已完成</span>
+              <strong>{completedMemoTaskCount}</strong>
+            </article>
+            <article className="memo-stat-card">
+              <span className="memo-stat-card__label">高优先级</span>
+              <strong>{criticalMemoTaskCount}</strong>
+            </article>
+          </div>
+        </header>
+
+        <div className="memo-layout">
+          <aside className="memo-sidebar">
+            <section className="memo-panel memo-panel--sidebar">
+              <span className="memo-panel__eyebrow">本周状态</span>
+              <h2 className="serif-title">备忘录概览</h2>
+              <p>
+                这里保留更偏商务的节奏。任务、提醒和结果更新都先在这里收口，不用每次都进复盘页。
+              </p>
+            </section>
+
+            <div className="memo-sidebar-list">
+              {memoSidebarItems.map((item) => (
+                <article className="memo-sidebar-card" key={item.label}>
+                  <div className="memo-sidebar-card__topline">
+                    <span>{item.label}</span>
+                    <strong>{item.value}</strong>
+                  </div>
+                  <p>{item.note}</p>
+                </article>
+              ))}
+            </div>
+
+            {homeLeadSession ? (
+              <section className="memo-panel memo-panel--accent">
+                <span className="memo-panel__eyebrow">当前关联</span>
+                <h3 className="serif-title">
+                  {homeLeadSession.company} · {homeLeadSession.department}
+                </h3>
+                <p>{homeLeadSession.nextActionLabel}</p>
+
+                <div className="memo-panel__actions">
+                  <button
+                    className="btn btn-secondary btn-compact memo-btn-secondary"
+                    type="button"
+                    onClick={() => openDetail(homeLeadSession.sessionKey)}
+                  >
+                    查看档案
+                  </button>
+                  <button
+                    className="btn btn-secondary btn-compact memo-btn-secondary"
+                    type="button"
+                    onClick={() => openWorkspace(homeLeadSession.sessionKey)}
+                  >
+                    进入复盘
+                  </button>
+                </div>
+              </section>
+            ) : null}
+          </aside>
+
+          <main className="memo-main">
+            {memoGroups.map((group) => (
+              <section className="memo-panel memo-group-panel" key={group.id}>
+                <div className="memo-group-panel__header">
+                  <div>
+                    <span className="memo-panel__eyebrow">{group.title}</span>
+                    <h2 className="serif-title">{group.description}</h2>
+                  </div>
+                  <span className="memo-group-panel__count">
+                    {group.items.filter((item) => item.completed).length} / {group.items.length}
+                  </span>
+                </div>
+
+                <div className="memo-task-list">
+                  {group.items.map((item) => (
+                    <article
+                      className={[
+                        "memo-task-row",
+                        item.completed ? "is-complete" : "",
+                        `tone-${item.tone}`,
+                      ]
+                        .filter(Boolean)
+                        .join(" ")}
+                      key={item.id}
+                    >
+                      <button
+                        className={`memo-check${item.completed ? " is-complete" : ""}`}
+                        type="button"
+                        aria-pressed={item.completed}
+                        onClick={() => toggleMemoTask(item.id)}
+                      >
+                        <span className="memo-check__ring" />
+                        <span className="memo-check__dot" />
+                      </button>
+
+                      <div className="memo-task-row__body">
+                        <div className="memo-task-row__topline">
+                          <strong>{item.title}</strong>
+                          <span>{item.dueLabel}</span>
+                        </div>
+                        <p>{item.detail}</p>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </section>
+            ))}
+          </main>
+        </div>
+      </div>
+    );
+  }
+
   function renderWorkspacePage() {
     return (
       <div className="workspace-flow">
@@ -1054,6 +1261,9 @@ export default function App() {
             </div>
 
             <div className="page-header__buttons">
+              <button className="btn btn-secondary" type="button" onClick={openMemo}>
+                打开备忘录
+              </button>
               <button className="btn btn-secondary" type="button">
                 导出完整文档
               </button>
@@ -1302,7 +1512,7 @@ export default function App() {
   }
 
   return (
-    <div className="app-shell">
+    <div className={`app-shell${pageState.mode === "memo" ? " app-shell--memo" : ""}`}>
       <div className="ambient ambient-a" />
       <div className="ambient ambient-b" />
 
@@ -1310,7 +1520,9 @@ export default function App() {
         ? renderHomePage()
         : pageState.mode === "detail"
           ? renderDetailPage()
-          : renderWorkspacePage()}
+          : pageState.mode === "memo"
+            ? renderMemoPage()
+            : renderWorkspacePage()}
 
       {mergeModal ? (
         <div className="modal-backdrop" role="presentation" onClick={closeMergeModal}>

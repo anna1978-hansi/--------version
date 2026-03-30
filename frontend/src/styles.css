@@ -1400,7 +1400,13 @@ textarea {
   gap: 18px;
   padding: 22px 18px 18px;
   border-radius: var(--radius-xl);
-  min-height: calc(100vh - 72px);
+  height: calc(100svh - 48px);
+  min-height: 0;
+  overflow: hidden;
+}
+
+.rail-section {
+  flex: 0 0 auto;
 }
 
 .rail-section__header p {
@@ -1472,8 +1478,27 @@ textarea {
   min-height: 0;
   gap: 8px;
   overflow-y: auto;
-  padding-right: 4px;
+  overscroll-behavior: contain;
+  padding-right: 8px;
+  padding-bottom: 4px;
   scrollbar-gutter: stable;
+}
+
+.round-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.round-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.round-list::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(148, 134, 120, 0.34);
+}
+
+.round-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(159, 61, 44, 0.38);
 }
 
 .round-card {
@@ -2072,6 +2097,8 @@ textarea {
   }
 
   .nav-rail {
+    height: auto;
+    max-height: min(72svh, 720px);
     min-height: auto;
   }
 
@@ -2152,6 +2179,10 @@ textarea {
 
   .timeline-item {
     grid-template-columns: 1fr;
+  }
+
+  .nav-rail {
+    max-height: min(68svh, 640px);
   }
 
   .timeline-item__date {

@@ -17,9 +17,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <Routes>
           <Route path={routePaths.home} element={<App />}>
             <Route index element={<HomePage />} />
+            <Route path="homepage" element={<Navigate replace to={routePaths.home} />} />
             <Route path="detail" element={<DetailPage />} />
-            <Route path="detail/:sessionKey" element={<DetailPage />} />
-            <Route path="workspace" element={<WorkspacePage />} />
+            <Route path="workspace" element={<Navigate replace to={routePaths.detail} />} />
             <Route path="workspace/:sessionKey" element={<WorkspacePage />} />
             <Route path="memo" element={<MemoPage />} />
           </Route>

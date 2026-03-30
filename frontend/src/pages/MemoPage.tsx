@@ -4,7 +4,8 @@ import { useAppNavigate } from "../routes";
 
 export function MemoPage() {
   const {
-    homeLeadSession,
+    featuredInterviewGroup,
+    featuredInterviewRecord,
     memoGroups,
     pendingMemoTaskCount,
     completedMemoTaskCount,
@@ -30,9 +31,9 @@ export function MemoPage() {
             <button
               className="btn btn-secondary memo-btn-secondary"
               type="button"
-              onClick={() => (homeLeadSession ? openDetail(homeLeadSession.sessionKey) : openHome())}
+              onClick={openDetail}
             >
-              打开当前重点档案
+              打开面试记录页
             </button>
           </div>
         </div>
@@ -75,28 +76,39 @@ export function MemoPage() {
             ))}
           </div>
 
-          {homeLeadSession ? (
+          {featuredInterviewGroup && featuredInterviewRecord ? (
             <section className="memo-panel memo-panel--accent">
               <span className="memo-panel__eyebrow">当前关联</span>
               <h3 className="serif-title">
-                {homeLeadSession.company} · {homeLeadSession.department}
+                {featuredInterviewGroup.applicationRecord.company} ·{" "}
+                {featuredInterviewGroup.applicationRecord.department || featuredInterviewGroup.applicationRecord.roleTitle}
               </h3>
-              <p>{homeLeadSession.nextActionLabel}</p>
+              <p>
+                {featuredInterviewRecord.roundLabel} ·{" "}
+                {featuredInterviewRecord.notes || featuredInterviewRecord.processingDescription}
+              </p>
 
               <div className="memo-panel__actions">
                 <button
                   className="btn btn-secondary btn-compact memo-btn-secondary"
                   type="button"
-                  onClick={() => openDetail(homeLeadSession.sessionKey)}
+                  onClick={openDetail}
                 >
-                  查看档案
+                  查看记录页
                 </button>
                 <button
                   className="btn btn-secondary btn-compact memo-btn-secondary"
                   type="button"
-                  onClick={() => openWorkspace(homeLeadSession.sessionKey)}
+                  disabled={!featuredInterviewRecord.canOpenWorkspace}
+                  onClick={() =>
+                    featuredInterviewRecord.sessionKey
+                      ? openWorkspace(featuredInterviewRecord.sessionKey)
+                      : undefined
+                  }
                 >
-                  进入复盘
+                  {featuredInterviewRecord.canOpenWorkspace
+                    ? "进入当前复盘"
+                    : featuredInterviewRecord.actionLabel}
                 </button>
               </div>
             </section>

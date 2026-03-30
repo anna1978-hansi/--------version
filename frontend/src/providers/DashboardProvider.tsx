@@ -15,6 +15,14 @@ import {
   type DashboardSessionCard,
   type InterviewStatusKey,
 } from "../dashboardData";
+import {
+  buildInitialInterviewRecords,
+  buildInterviewRecordGroups,
+  createInterviewRecordItem,
+  type InterviewRecord,
+  type InterviewRecordDraft,
+  type InterviewRecordGroup,
+} from "../interviewRecordData";
 import { fetchSessions } from "../api";
 import type { ApiSession } from "../types";
 
@@ -22,6 +30,12 @@ type DashboardContextValue = {
   applicationRecords: ApplicationRecord[];
   applicationSummary: ReturnType<typeof buildApplicationSummary>;
   applicationNotice: string | null;
+  interviewRecords: InterviewRecord[];
+  interviewRecordGroups: InterviewRecordGroup[];
+  featuredInterviewGroup: InterviewRecordGroup | null;
+  featuredInterviewRecord: InterviewRecord | null;
+  readyInterviewRecordCount: number;
+  pendingInterviewRecordCount: number;
   sessionCatalog: ApiSession[];
   catalogLoading: boolean;
   catalogNotice: string | null;
@@ -40,8 +54,10 @@ type DashboardContextValue = {
   pendingMemoTaskCount: number;
   criticalMemoTaskCount: number;
   upsertApplicationRecord: (recordId: string | null, draft: ApplicationRecordDraft) => void;
+  createInterviewRecord: (draft: InterviewRecordDraft) => void;
   updateInterviewStatus: (sessionKey: string, statusKey: InterviewStatusKey) => void;
   toggleMemoTask: (taskId: string) => void;
+  findInterviewRecordBySessionKey: (sessionKey?: string) => InterviewRecord | null;
   refreshSessionCatalog: () => Promise<ApiSession[]>;
 };
 
@@ -50,6 +66,9 @@ const DashboardContext = createContext<DashboardContextValue | null>(null);
 export function DashboardProvider({ children }: { children: ReactNode }) {
   const [applicationRecords, setApplicationRecords] = useState<ApplicationRecord[]>(() =>
     buildInitialApplicationRecords()
+  );
+  const [interviewRecords, setInterviewRecords] = useState<InterviewRecord[]>(() =>
+    buildInitialInterviewRecords()
   );
   const [sessionCatalog, setSessionCatalog] = useState<ApiSession[]>([]);
   const [catalogLoading, setCatalogLoading] = useState(true);
@@ -107,6 +126,13 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     });
   }
 
+  function createInterviewRecord(draft: InterviewRecordDraft) {
+    setInterviewRecords((current) => [
+      createInterviewRecordItem(`record-${Date.now()}`, draft),
+      ...current,
+    ]);
+  }
+
   function updateInterviewStatus(sessionKey: string, statusKey: InterviewStatusKey) {
     setStatusOverrides((current) => ({
       ...current,
@@ -159,8 +185,22 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     0
   );
   const applicationSummary = buildApplicationSummary(applicationRecords);
+  const interviewRecordGroups = buildInterviewRecordGroups(applicationRecords, interviewRecords);
+  const featuredInterviewGroup = interviewRecordGroups[0] || null;
+  const featuredInterviewRecord =
+    interviewRecords.find((item) => item.canOpenWorkspace) || interviewRecords[0] || null;
+  const readyInterviewRecordCount = interviewRecords.filter((item) => item.canOpenWorkspace).length;
+  const pendingInterviewRecordCount = interviewRecords.length - readyInterviewRecordCount;
   const applicationNotice =
     "当前首页使用前端样例投递记录，和录音复盘工作台已经解耦；后续可以再接真实持久化数据。";
+
+  function findInterviewRecordBySessionKey(sessionKey?: string) {
+    if (!sessionKey) {
+      return null;
+    }
+
+    return interviewRecords.find((item) => item.sessionKey === sessionKey) || null;
+  }
 
   return (
     <DashboardContext.Provider
@@ -168,6 +208,12 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
         applicationRecords,
         applicationSummary,
         applicationNotice,
+        interviewRecords,
+        interviewRecordGroups,
+        featuredInterviewGroup,
+        featuredInterviewRecord,
+        readyInterviewRecordCount,
+        pendingInterviewRecordCount,
         sessionCatalog,
         catalogLoading,
         catalogNotice,
@@ -186,8 +232,10 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
         pendingMemoTaskCount,
         criticalMemoTaskCount,
         upsertApplicationRecord,
+        createInterviewRecord,
         updateInterviewStatus,
         toggleMemoTask,
+        findInterviewRecordBySessionKey,
         refreshSessionCatalog,
       }}
     >

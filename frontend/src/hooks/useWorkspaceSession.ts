@@ -32,7 +32,12 @@ function appendText(currentText: string, nextText: string) {
 }
 
 export function useWorkspaceSession(requestedSessionKey?: string) {
-  const { sessionCatalog, refreshSessionCatalog, dashboardSessions, homeLeadSession } = useDashboard();
+  const {
+    sessionCatalog,
+    refreshSessionCatalog,
+    dashboardSessions,
+    findInterviewRecordBySessionKey,
+  } = useDashboard();
 
   const [sessionSummary, setSessionSummary] = useState<SessionSummary>(defaultSessionSummary);
   const [rounds, setRounds] = useState<RoundItem[]>([]);
@@ -49,7 +54,10 @@ export function useWorkspaceSession(requestedSessionKey?: string) {
   const currentSessionCard =
     dashboardSessions.find((item) => item.sessionKey === sessionSummary.sessionKey) ||
     dashboardSessions.find((item) => item.sessionKey === requestedSessionKey) ||
-    homeLeadSession;
+    null;
+  const currentInterviewRecord =
+    findInterviewRecordBySessionKey(sessionSummary.sessionKey) ||
+    findInterviewRecordBySessionKey(requestedSessionKey);
   const activeRound =
     rounds.find((item) => item.roundNumber === activeRoundNumber) || rounds[0] || null;
   const reviewFlagCount = rounds.filter((item) => item.needsReview).length;
@@ -83,8 +91,7 @@ export function useWorkspaceSession(requestedSessionKey?: string) {
   function applyMockSessionData(preferredRoundNumber?: number | null, sessionKey?: string) {
     const matchedCard =
       dashboardSessions.find((item) => item.sessionKey === sessionKey) ||
-      currentSessionCard ||
-      homeLeadSession;
+      currentSessionCard;
 
     setSessionSummary({
       sessionKey: matchedCard?.sessionKey || mockSessionSummary.sessionKey,
@@ -121,22 +128,18 @@ export function useWorkspaceSession(requestedSessionKey?: string) {
 
     try {
       let resolvedSessionKey = targetSessionKey;
-      let availableItems = sessionCatalog;
-
-      if (!availableItems.length && !resolvedSessionKey) {
-        availableItems = await refreshSessionCatalog();
-      }
 
       if (!resolvedSessionKey) {
-        const firstSession = availableItems[0];
-        resolvedSessionKey = firstSession?.sessionKey;
-      }
-
-      if (!resolvedSessionKey) {
-        applyMockSessionData(preferredRoundNumber, mockSessionSummary.sessionKey);
-        setIsMockWorkspace(true);
-        setWorkspaceNotice("数据库里还没有真实会话，当前先展示静态样例工作台。");
+        setSessionSummary(defaultSessionSummary);
+        setRounds([]);
+        setActiveRoundNumber(null);
+        setIsMockWorkspace(false);
+        setWorkspaceNotice("请先从详情页选择一条可复盘的面试记录。");
         return;
+      }
+
+      if (!sessionCatalog.length) {
+        await refreshSessionCatalog();
       }
 
       const turnsResponse = await fetchSessionTurns(resolvedSessionKey);
@@ -341,6 +344,7 @@ export function useWorkspaceSession(requestedSessionKey?: string) {
     mergeModal,
     isMockWorkspace,
     currentSessionCard,
+    currentInterviewRecord,
     reviewFlagCount,
     highValueCount,
     selectedRounds,

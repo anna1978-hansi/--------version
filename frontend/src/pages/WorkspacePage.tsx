@@ -23,6 +23,7 @@ export function WorkspacePage() {
     mergeModal,
     isMockWorkspace,
     currentSessionCard,
+    currentInterviewRecord,
     reviewFlagCount,
     highValueCount,
     selectedRounds,
@@ -44,16 +45,15 @@ export function WorkspacePage() {
     <div className="workspace-flow">
       <header className="page-header workspace-header glass-card">
         <div className="page-header__copy">
-          <button
-            className="link-button"
-            type="button"
-            onClick={() => openDetail(currentSessionCard?.sessionKey || sessionKey)}
-          >
+          <button className="link-button" type="button" onClick={openDetail}>
             返回面试档案页
           </button>
 
           <div className="workspace-header__badges">
             <span className="badge">录音复盘工作台</span>
+            {currentInterviewRecord ? (
+              <span className="badge badge-muted">{currentInterviewRecord.roundLabel}</span>
+            ) : null}
             {isMockWorkspace ? <span className="badge badge-muted">静态样例</span> : null}
             {currentSessionCard ? (
               <>
@@ -67,7 +67,8 @@ export function WorkspacePage() {
 
           <h1 className="serif-title">{sessionSummary.title}</h1>
           <p className="workspace-header__summary">
-            {currentSessionCard?.improvementNote ||
+            {currentInterviewRecord?.notes ||
+              currentSessionCard?.improvementNote ||
               "这里继续承接单次面试的问答整理、轮次修正和复盘细化。"}
           </p>
 

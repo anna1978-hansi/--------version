@@ -10,12 +10,14 @@ import {
 } from "../applicationTrackerData";
 import { StatePanel } from "../components/StatePanel";
 import { useDashboard } from "../providers/DashboardProvider";
+import { useAppNavigate } from "../routes";
 
 type EditorMode = "create" | "edit" | null;
 
 export function HomePage() {
   const { applicationRecords, applicationSummary, applicationNotice, upsertApplicationRecord } =
     useDashboard();
+  const { openDetail } = useAppNavigate();
   const [editorMode, setEditorMode] = useState<EditorMode>(null);
   const [editingRecordId, setEditingRecordId] = useState<string | null>(null);
   const [draft, setDraft] = useState<ApplicationRecordDraft>(() => createEmptyApplicationDraft());
@@ -123,9 +125,14 @@ export function HomePage() {
             </p>
           </div>
 
-          <button className="btn btn-primary" type="button" onClick={openCreateEditor}>
-            新建记录
-          </button>
+          <div className="tracker-shell__actions">
+            <button className="btn btn-secondary" type="button" onClick={openDetail}>
+              打开面试记录页
+            </button>
+            <button className="btn btn-primary" type="button" onClick={openCreateEditor}>
+              新建记录
+            </button>
+          </div>
         </div>
 
         {applicationNotice ? <div className="state-block tracker-notice">{applicationNotice}</div> : null}
@@ -219,13 +226,22 @@ export function HomePage() {
                     </div>
                   </td>
                   <td>
-                    <button
-                      className="btn btn-secondary btn-compact"
-                      type="button"
-                      onClick={() => openEditEditor(record)}
-                    >
-                      打开
-                    </button>
+                    <div className="tracker-row-actions">
+                      <button
+                        className="btn btn-secondary btn-compact"
+                        type="button"
+                        onClick={() => openEditEditor(record)}
+                      >
+                        编辑
+                      </button>
+                      <button
+                        className="btn btn-secondary btn-compact"
+                        type="button"
+                        onClick={openDetail}
+                      >
+                        面试记录
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

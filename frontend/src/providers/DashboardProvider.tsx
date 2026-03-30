@@ -1,5 +1,13 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import {
+  buildApplicationSummary,
+  buildInitialApplicationRecords,
+  createApplicationRecord,
+  sortTrackedApplications,
+  type ApplicationRecord,
+  type ApplicationRecordDraft,
+} from "../applicationTrackerData";
+import {
   applyInterviewStatus,
   buildDashboardSessions,
   buildPlatformDigests,
@@ -11,6 +19,9 @@ import { fetchSessions } from "../api";
 import type { ApiSession } from "../types";
 
 type DashboardContextValue = {
+  applicationRecords: ApplicationRecord[];
+  applicationSummary: ReturnType<typeof buildApplicationSummary>;
+  applicationNotice: string | null;
   sessionCatalog: ApiSession[];
   catalogLoading: boolean;
   catalogNotice: string | null;
@@ -28,6 +39,7 @@ type DashboardContextValue = {
   completedMemoTaskCount: number;
   pendingMemoTaskCount: number;
   criticalMemoTaskCount: number;
+  upsertApplicationRecord: (recordId: string | null, draft: ApplicationRecordDraft) => void;
   updateInterviewStatus: (sessionKey: string, statusKey: InterviewStatusKey) => void;
   toggleMemoTask: (taskId: string) => void;
   refreshSessionCatalog: () => Promise<ApiSession[]>;
@@ -36,6 +48,9 @@ type DashboardContextValue = {
 const DashboardContext = createContext<DashboardContextValue | null>(null);
 
 export function DashboardProvider({ children }: { children: ReactNode }) {
+  const [applicationRecords, setApplicationRecords] = useState<ApplicationRecord[]>(() =>
+    buildInitialApplicationRecords()
+  );
   const [sessionCatalog, setSessionCatalog] = useState<ApiSession[]>([]);
   const [catalogLoading, setCatalogLoading] = useState(true);
   const [catalogNotice, setCatalogNotice] = useState<string | null>(null);
@@ -79,6 +94,18 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     void refreshSessionCatalog();
   }, []);
+
+  function upsertApplicationRecord(recordId: string | null, draft: ApplicationRecordDraft) {
+    setApplicationRecords((current) => {
+      const nextId = recordId || `app-${Date.now()}`;
+      const nextRecord = createApplicationRecord(nextId, draft);
+      const nextRecords = recordId
+        ? current.map((record) => (record.id === recordId ? nextRecord : record))
+        : [nextRecord, ...current];
+
+      return sortTrackedApplications(nextRecords);
+    });
+  }
 
   function updateInterviewStatus(sessionKey: string, statusKey: InterviewStatusKey) {
     setStatusOverrides((current) => ({
@@ -131,10 +158,16 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
       sum + group.items.filter((item) => item.tone === "critical" && !item.completed).length,
     0
   );
+  const applicationSummary = buildApplicationSummary(applicationRecords);
+  const applicationNotice =
+    "当前首页使用前端样例投递记录，和录音复盘工作台已经解耦；后续可以再接真实持久化数据。";
 
   return (
     <DashboardContext.Provider
       value={{
+        applicationRecords,
+        applicationSummary,
+        applicationNotice,
         sessionCatalog,
         catalogLoading,
         catalogNotice,
@@ -152,6 +185,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
         completedMemoTaskCount,
         pendingMemoTaskCount,
         criticalMemoTaskCount,
+        upsertApplicationRecord,
         updateInterviewStatus,
         toggleMemoTask,
         refreshSessionCatalog,
